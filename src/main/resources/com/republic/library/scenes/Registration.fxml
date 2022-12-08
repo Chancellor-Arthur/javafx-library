@@ -26,7 +26,7 @@
                         <Font name="Arial" size="18.0" />
                     </font>
                 </PasswordField>
-                <Button fx:id="ButtonSignUp" layoutX="293.0" layoutY="355.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="205.0" style="-fx-background-color: yellow;" text="Зарегистрироваться">
+                <Button fx:id="ButtonSignUp" layoutX="293.0" layoutY="355.0" mnemonicParsing="false" onAction="#SignUp" prefHeight="42.0" prefWidth="205.0" style="-fx-background-color: yellow; -fx-cursor: hand;" text="Зарегистрироваться">
                     <font>
                         <Font name="Arial" size="18.0" />
                     </font>
@@ -43,7 +43,7 @@
                 <Font name="Arial" size="48.0" />
             </font>
         </Label>
-        <Button fx:id="ButtonGoToSignIn" layoutX="647.0" layoutY="24.0" mnemonicParsing="false" onAction="#GoToSignIn" prefHeight="28.0" prefWidth="130.0" style="-fx-background-color: orange;" text="Вход">
+        <Button fx:id="ButtonGoToSignIn" layoutX="647.0" layoutY="24.0" mnemonicParsing="false" onAction="#GoToSignIn" prefHeight="28.0" prefWidth="130.0" style="-fx-background-color: orange; -fx-cursor: hand;" text="Вход">
             <font>
                 <Font name="Arial" size="18.0" />
             </font>

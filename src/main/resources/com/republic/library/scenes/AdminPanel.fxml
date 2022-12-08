@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: darkred;" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.republic.library.controllers.AdminPanelController">
+    <children>
+        <AnchorPane layoutY="86.0" prefHeight="514.0" prefWidth="800.0" style="-fx-background-color: white;">
+         <children>
+            <TableView fx:id="TableViewLogs" layoutX="8.0" layoutY="42.0" prefHeight="210.0" prefWidth="784.0">
+              <columns>
+                <TableColumn fx:id="TableColumnInitiator" prefWidth="76.80001831054688" text="Инициатор" />
+                <TableColumn fx:id="TableColumnBook" minWidth="0.0" prefWidth="96.00003051757812" text="Книга" />
+                  <TableColumn fx:id="TableColumnNewValue" prefWidth="239.20001220703125" text="Новое значение" />
+                  <TableColumn fx:id="TableColumnOldValue" minWidth="0.0" prefWidth="223.199951171875" text="Старое значение" />
+                  <TableColumn fx:id="TableColumnDate" minWidth="0.0" prefWidth="144.00006103515625" text="Дата" />
+              </columns>
+            </TableView>
+            <Accordion layoutX="155.0" layoutY="335.0" />
+            <Label layoutX="12.0" layoutY="14.0" text="Аудит">
+               <font>
+                  <Font name="Arial" size="24.0" />
+               </font>
+            </Label>
+            <TableView fx:id="TableViewUsers" layoutX="8.0" layoutY="289.0" prefHeight="217.0" prefWidth="784.0">
+               <columns>
+                  <TableColumn fx:id="TableColumnLogin" prefWidth="275.20001220703125" text="Логин" />
+                  <TableColumn fx:id="TableColumnPassword" minWidth="0.0" prefWidth="299.20001220703125" text="Пароль" />
+                  <TableColumn fx:id="TableColumnIsAdmin" prefWidth="211.99993896484375" text="Администратор" />
+               </columns>
+            </TableView>
+            <Label layoutX="10.0" layoutY="261.0" prefHeight="27.0" prefWidth="164.0" text="Пользователи">
+               <font>
+                  <Font name="Arial" size="24.0" />
+               </font>
+            </Label>
+         </children>
+        </AnchorPane>
+        <Label layoutX="14.0" layoutY="14.0" text="Панель администратора" textFill="WHITE">
+            <font>
+                <Font name="Arial" size="48.0" />
+            </font>
+        </Label>
+        <Button fx:id="ButtonGoToLibrary" layoutX="670.0" layoutY="20.0" mnemonicParsing="false" onAction="#GoToLibrary" prefHeight="43.0" prefWidth="115.0" style="-fx-background-color: orange; -fx-cursor: hand;" text="Закрыть">
+            <font>
+                <Font name="Arial" size="18.0" />
+            </font>
+        </Button>
+    </children>
+</AnchorPane>
