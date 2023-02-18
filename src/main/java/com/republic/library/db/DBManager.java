@@ -14,86 +14,122 @@ public final class DBManager {
         return DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
     }
 
-    private static ResultSet executeQuery(String query) throws SQLException {
-        return getConnection().createStatement().executeQuery(query);
-    }
-
     private static void executeUpdate(String query) throws SQLException {
         getConnection().createStatement().executeUpdate(query);
     }
 
     public static ResultSet getUser(String login, String password) throws SQLException {
-        return executeQuery(String.format
-                (
-                        "SELECT * FROM users WHERE login = '%s' AND password = '%s'",
-                        login,
-                        password
-                )
-        );
+        String query = "SELECT * FROM users WHERE login = ? AND password = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, login);
+        statement.setString(2, password);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getUser(String login) throws SQLException {
-        return executeQuery(String.format("SELECT * FROM users WHERE login = '%s'", login));
+        String query = "SELECT * FROM users WHERE login = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, login);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getAllBooks() throws SQLException {
-        return executeQuery("SELECT * FROM books");
+        String query = "SELECT * FROM books";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        return statement.executeQuery();
+
     }
 
     public static ResultSet getAllLogs() throws SQLException {
-        return executeQuery("SELECT * FROM logs");
+        String query = "SELECT * FROM logs";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getAllUsers() throws SQLException {
-        return executeQuery("SELECT * FROM users");
+        String query = "SELECT * FROM users";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getAllCategories() throws SQLException {
-        return executeQuery("SELECT * FROM categories");
+        String query = "SELECT * FROM categories";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getBook(int bookId) throws SQLException {
-        return executeQuery(String.format("SELECT * FROM books WHERE id = %d", bookId));
+        String query = "SELECT * FROM books WHERE id = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, bookId);
+
+        return statement.executeQuery();
     }
 
-    public static ResultSet getBook
-            (String title, String author, int year, int pages, String description, String link) throws SQLException {
-        return executeQuery(String.format
-                ("SELECT * FROM books " +
-                                "WHERE title = '%s' AND author = '%s' AND year = '%d' AND " +
-                                "pages = '%d' AND description = '%s' AND link = '%s'",
-                        title, author, year, pages, description, link));
+    public static ResultSet getBook(String title, String author, int year, int pages, String description, String link) throws SQLException {
+
+        String query = "SELECT * FROM books WHERE title = ? AND author = ? AND year = ? " +
+                "AND pages = ? AND description = ? AND link = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, title);
+        statement.setString(2, author);
+        statement.setInt(3, year);
+        statement.setInt(4, pages);
+        statement.setString(5, description);
+        statement.setString(6, link);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getCategoryByName(String categoryName) throws SQLException {
-        return executeQuery(String.format("SELECT id FROM categories WHERE name = '%s'", categoryName));
+        String query = "SELECT id FROM categories WHERE name = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, categoryName);
+
+        return statement.executeQuery();
     }
 
     public static ResultSet getBookCategories(int bookId) throws SQLException {
-        return executeQuery(String.format
-                (
-                        "SELECT name FROM books_categories " +
-                                "INNER JOIN categories on categories.id = books_categories.category_id " +
-                                "WHERE book_id = %d",
-                        bookId
-                )
-        );
+        String query = "SELECT name FROM books_categories INNER JOIN categories " +
+                "ON categories.id = books_categories.category_id WHERE book_id = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, bookId);
+
+        return statement.executeQuery();
     }
 
     public static void createBook(Book book) throws SQLException {
-        executeUpdate(String.format
-                (
-                        "INSERT INTO books (title, author, year, pages, description, link)" +
-                                "VALUES ('%s', '%s', '%d', '%d', '%s', '%s')",
-                        book.getTitle(), book.getAuthor(), book.getYear(), book.getPages(),
-                        book.getDescription(), book.getLink()
-                )
-        );
+        String query = "INSERT INTO books (title, author, year, pages, description, link) " +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, book.getTitle());
+        statement.setString(2, book.getAuthor());
+        statement.setInt(3, book.getYear());
+        statement.setInt(4, book.getPages());
+        statement.setString(5,  book.getDescription());
+        statement.setString(6, book.getLink());
+
+        statement.executeUpdate();
 
         if (book.getCategories() == null) return;
 
-        var newBook = getBook(book.getTitle(), book.getAuthor(), book.getYear(), book.getPages(),
-                book.getDescription(), book.getLink());
+        var newBook = getBook(book.getTitle(), book.getAuthor(), book.getYear(), book.getPages(), book.getDescription(), book.getLink());
         newBook.next();
 
         var categories = book.getCategories().split(", ");
@@ -102,7 +138,13 @@ public final class DBManager {
     }
 
     public static void createUser(String login, String password) throws SQLException {
-        executeUpdate(String.format("INSERT INTO users (login, password) VALUES ('%s', '%s')", login, password));
+        String query = "INSERT INTO users (login, password) VALUES (?, ?)";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, login);
+        statement.setString(2, password);
+
+        statement.executeUpdate();
     }
 
     public static void createBookCategories(int bookId, String[] categories) throws SQLException {
@@ -123,32 +165,36 @@ public final class DBManager {
     }
 
     public static void createBookCategory(int bookId, int categoryId) throws SQLException {
-        executeUpdate(String.format
-                (
-                        "INSERT INTO books_categories (book_id, category_id) VALUES (%d, %d)",
-                        bookId, categoryId
-                ));
+        String query = "INSERT INTO books_categories (book_id, category_id) VALUES (?, ?)";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, bookId);
+        statement.setInt(2, categoryId);
+
+        statement.executeUpdate();
     }
 
     public static void createCategory(String categoryName) throws SQLException {
-        executeUpdate(String.format("INSERT INTO categories (name) VALUES ('%s')", categoryName));
+        String query = "INSERT INTO categories (name) VALUES (?)";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, categoryName);
+
+        statement.executeUpdate();
     }
 
     public static void updateBook(Book book) throws SQLException {
-        executeUpdate(String.format
-                (
-                        "UPDATE books " +
-                                "SET title = '%s', " +
-                                "author = '%s', " +
-                                "year = '%d', " +
-                                "pages = '%d', " +
-                                "description = '%s', " +
-                                "link = '%s' " +
-                                "WHERE id = %d",
-                        book.getTitle(), book.getAuthor(), book.getYear(), book.getPages(),
-                        book.getDescription(), book.getLink(), book.getId()
-                )
-        );
+        String query = "UPDATE books SET title = ?, author = ?, year = ?, pages = ?, description = ?, link = ? WHERE id = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setString(1, book.getTitle());
+        statement.setString(2, book.getAuthor());
+        statement.setInt(3, book.getYear());
+        statement.setInt(4, book.getPages());
+        statement.setString(5, book.getDescription());
+        statement.setString(6, book.getLink());
+
+        statement.executeUpdate();
 
         if (book.getCategories() == null) return;
 
@@ -160,10 +206,20 @@ public final class DBManager {
     }
 
     public static void removeBookCategories(int bookId) throws SQLException {
-        executeUpdate(String.format("DELETE FROM books_categories WHERE book_id = %d", bookId));
+        String query = "DELETE FROM books_categories WHERE book_id = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, bookId);
+
+        statement.executeQuery();
     }
 
     public static void removeBook(int bookId) throws SQLException {
-        executeUpdate(String.format("DELETE FROM books WHERE id = %d", bookId));
+        String query = "DELETE FROM books WHERE book_id = ?";
+
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.setInt(1, bookId);
+
+        statement.executeQuery();
     }
 }
